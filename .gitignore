@@ -87,3 +87,4 @@ gradle-app.setting
 # IntelliJ IDE
 .idea/
 cmake-build-debug/
+*.iml
