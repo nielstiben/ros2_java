@@ -2,6 +2,7 @@ package org.ros2.rcljava.action_client;
 
 import org.ros2.rcljava.common.JNIUtils;
 import org.ros2.rcljava.interfaces.ActionDefinition;
+import org.ros2.rcljava.interfaces.MessageDefinition;
 import org.ros2.rcljava.node.Node;
 import org.ros2.rcljava.publisher.PublisherImpl;
 import org.slf4j.Logger;
@@ -47,5 +48,38 @@ public class ActionClientImpl<T extends ActionDefinition> implements ActionClien
 
     public final void hello(){
         nativeHello();
+    }
+    // =====================================================
+    // OVERRIDE METHODS
+    // =====================================================
+
+    @Override
+    public void sendGoal(ActionDefinition actionGoalMessage) {
+
+    }
+
+    @Override
+    public void cancelGoal(ActionDefinition actionGoalMessage) {
+
+    }
+
+    @Override
+    public void executeResultCallback(MessageDefinition resultMessage) {
+
+    }
+
+    @Override
+    public void executeFeedbackCallback(MessageDefinition feedbackMessage) {
+
+    }
+
+    @Override
+    public void dispose() {
+
+    }
+
+    @Override
+    public long getHandle() {
+        return 0;
     }
 }

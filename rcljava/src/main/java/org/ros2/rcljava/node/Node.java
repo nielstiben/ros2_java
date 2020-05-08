@@ -19,10 +19,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.ros2.rcljava.action_client.ActionClient;
 import org.ros2.rcljava.client.Client;
 import org.ros2.rcljava.concurrent.Callback;
 import org.ros2.rcljava.consumers.Consumer;
 import org.ros2.rcljava.consumers.TriConsumer;
+import org.ros2.rcljava.interfaces.ActionDefinition;
 import org.ros2.rcljava.qos.QoSProfile;
 import org.ros2.rcljava.interfaces.Disposable;
 import org.ros2.rcljava.interfaces.MessageDefinition;
@@ -41,6 +43,10 @@ import org.ros2.rcljava.timer.WallTimer;
  * A Node must be created via @{link RCLJava#createNode(String)}
  */
 public interface Node extends Disposable {
+  /**
+   * return All the @{link ActionClient}s that have been created by this instance.
+   */
+  Collection<ActionClient> getActionClients();
   /**
    * return All the @{link Client}s that have been created by this instance.
    */
@@ -67,7 +73,31 @@ public interface Node extends Disposable {
   Collection<Timer> getTimers();
 
   /**
-   * Create a Subscription&lt;T&gt;.
+   * Create an Action Client&&ltlt;T&gt;.
+   * Used as reference: {@link org.ros2.rcljava.client.ClientImpl}
+   * TODO nielstiben: Is dynamic generic typing possible? Ideally we don't want to include params <U> and <V>.
+   * @param <T> The type of the action that will be used by the
+   *     created {@link ActionClient}.
+   * @param actionType The type of the action that will be used by the
+   *    *     created {@link ActionClient}.
+   * @param actionName The action from which the created {@link ActionClient}
+   *     will use.
+   * @param resultCallback The callback function that will be triggered when a
+   *     result message is received by the {@link ActionClient}
+   * @param feedbackCallback The callback function that will be triggered when a
+   *     feedback message is received by the {@link ActionClient}
+   * @return An {@link ActionClient} that represents the underlying ROS2
+   *     action client structure.
+   */
+  <T extends ActionDefinition> ActionClient<T> createActionClient(
+      final Class<T> actionType,
+      final String actionName,
+      final Consumer<? extends MessageDefinition> resultCallback,
+      final Consumer<? extends MessageDefinition> feedbackCallback
+  );
+
+  /**
+   * Create a Subscription&&ltlt;T&gt;.
    *
    * @param <T> The type of the messages that will be received by the
    *     created @{link Subscription}.

@@ -16,6 +16,7 @@
 package org.ros2.rcljava.node;
 
 import org.ros2.rcljava.RCLJava;
+import org.ros2.rcljava.action_client.ActionClient;
 import org.ros2.rcljava.client.Client;
 import org.ros2.rcljava.client.ClientImpl;
 import org.ros2.rcljava.common.JNIUtils;
@@ -23,6 +24,7 @@ import org.ros2.rcljava.concurrent.Callback;
 import org.ros2.rcljava.consumers.Consumer;
 import org.ros2.rcljava.consumers.TriConsumer;
 import org.ros2.rcljava.contexts.Context;
+import org.ros2.rcljava.interfaces.ActionDefinition;
 import org.ros2.rcljava.qos.QoSProfile;
 import org.ros2.rcljava.interfaces.MessageDefinition;
 import org.ros2.rcljava.interfaces.ServiceDefinition;
@@ -106,6 +108,11 @@ public class NodeImpl implements Node {
   /**
    * All the @{link Client}s that have been created through this instance.
    */
+  private final Collection<ActionClient> actionClients;
+
+  /**
+   * All the @{link Client}s that have been created through this instance.
+   */
   private final Collection<Client> clients;
 
   /**
@@ -133,6 +140,7 @@ public class NodeImpl implements Node {
     this.publishers = new LinkedBlockingQueue<Publisher>();
     this.subscriptions = new LinkedBlockingQueue<Subscription>();
     this.services = new LinkedBlockingQueue<Service>();
+    this.actionClients = new LinkedBlockingQueue<ActionClient>();
     this.clients = new LinkedBlockingQueue<Client>();
     this.timers = new LinkedBlockingQueue<Timer>();
     this.mutex = new Object();
@@ -303,6 +311,13 @@ public class NodeImpl implements Node {
   /**
    * {@inheritDoc}
    */
+  public final Collection<ActionClient> getActionClients() {
+    return this.actionClients;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
   public final Collection<Client> getClients() {
     return this.clients;
   }
@@ -347,6 +362,24 @@ public class NodeImpl implements Node {
    */
   public final Collection<Timer> getTimers() {
     return this.timers;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final <T extends ActionDefinition>
+  ActionClient<T> createActionClient(Class<T> actionType, String actionName, Consumer<? extends MessageDefinition> resultCallback,
+                                           Consumer<? extends MessageDefinition> feedbackCallback, final QoSProfile qosProfile) {
+    long qosProfileHandle = RCLJava.convertQoSProfileToHandle(qosProfile);
+    return null;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public final <T extends ActionDefinition> ActionClient<T> createActionClient(
+      Class<T> actionType, String actionName, Consumer<? extends MessageDefinition> resultCallback, Consumer<? extends MessageDefinition> feedbackCallback) {
+    return this.createActionClient(actionType, actionName, resultCallback, feedbackCallback, QoSProfile.DEFAULT);
   }
 
   /**
