@@ -56,6 +56,7 @@ endif()
 set(${PROJECT_NAME}_jni_sources
   "src/main/cpp/org_ros2_rcljava_RCLJava.cpp"
   "src/main/cpp/org_ros2_rcljava_Time.cpp"
+  "src/main/cpp/org_ros2_rcljava_action_client_ActionClientImpl.cpp"
   "src/main/cpp/org_ros2_rcljava_client_ClientImpl.cpp"
   "src/main/cpp/org_ros2_rcljava_contexts_ContextImpl.cpp"
   "src/main/cpp/org_ros2_rcljava_executors_BaseExecutor.cpp"
@@ -116,6 +117,8 @@ endforeach()
 set(${PROJECT_NAME}_sources
   "src/main/java/org/ros2/rcljava/RCLJava.java"
   "src/main/java/org/ros2/rcljava/Time.java"
+  "src/main/java/org/ros2/rcljava/action_client/ActionClient.java"
+  "src/main/java/org/ros2/rcljava/action_client/ActionClientImpl.java"
   "src/main/java/org/ros2/rcljava/client/Client.java"
   "src/main/java/org/ros2/rcljava/client/ClientImpl.java"
   "src/main/java/org/ros2/rcljava/concurrent/Callback.java"
@@ -222,6 +225,7 @@ if(BUILD_TESTING)
   set(${PROJECT_NAME}_test_sources
     "src/test/java/org/ros2/rcljava/RCLJavaTest.java"
     "src/test/java/org/ros2/rcljava/TimeTest.java"
+    # "src/test/java/org/ros2/rcljava/action_client/ActionClientTest.java" <TODO: create test>
     # "src/test/java/org/ros2/rcljava/client/ClientTest.java"
     "src/test/java/org/ros2/rcljava/node/NodeTest.java"
     # "src/test/java/org/ros2/rcljava/parameters/AsyncParametersClientTest.java"
@@ -234,6 +238,7 @@ if(BUILD_TESTING)
   set(${PROJECT_NAME}_testsuites
     "org.ros2.rcljava.RCLJavaTest"
     "org.ros2.rcljava.TimeTest"
+    # "org.ros2.rcljava.action_client.ActionClientTest" <TODO: create test>
     # "org.ros2.rcljava.client.ClientTest"
     "org.ros2.rcljava.node.NodeTest"
     # "org.ros2.rcljava.parameters.SyncParametersClientTest"
