@@ -1,8 +1,43 @@
+// Copyright 2020 Niels Tiben
 //
-// Created by nielstiben on 07.05.20.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-#ifndef RCLJAVA_ORG_ROS2_RCLJAVA_ACTION_CLIENT_ACTIONCLIENT_H
-#define RCLJAVA_ORG_ROS2_RCLJAVA_ACTION_CLIENT_ACTIONCLIENT_H
+#include <jni.h>
+/* Header for class org_ros2_rcljava_client_ClientImpl */
 
-#endif //RCLJAVA_ORG_ROS2_RCLJAVA_ACTION_CLIENT_ACTIONCLIENT_H
+#ifndef ORG_ROS2_RCLJAVA_ACTIONCLIENT_ACTIONCLIENTIMPL_H_
+#define ORG_ROS2_RCLJAVA_ACTIONCLIENT_ACTIONCLIENTIMPL_H_
+#ifdef __cplusplus
+extern "C" {
+#endif
+/*
+ * Class:     org_ros2_rcljava_action_client_ActionClientImpl
+ * Method:    nativeSendClientRequest
+ * Signature: (JJJJJLorg/ros2/rcljava/interfaces/MessageDefinition;)V
+ */
+JNIEXPORT void
+JNICALL Java_org_ros2_rcljava_client_ClientImpl_nativeSendClientRequest(
+        JNIEnv *, jclass, jlong, jlong, jlong, jlong, jlong, jobject);
+
+/*
+ * Class:     org_ros2_rcljava_client_ClientImpl
+ * Method:    nativeDispose
+ * Signature: (JJ)V
+ */
+JNIEXPORT void
+JNICALL Java_org_ros2_rcljava_client_ClientImpl_nativeDispose(JNIEnv *, jclass, jlong, jlong);
+
+#ifdef __cplusplus
+}
+#endif
+#endif  // ORG_ROS2_RCLJAVA_CLIENT_CLIENTIMPL_H_

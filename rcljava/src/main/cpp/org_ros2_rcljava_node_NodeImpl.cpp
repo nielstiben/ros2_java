@@ -29,6 +29,7 @@
 
 #include "org_ros2_rcljava_node_NodeImpl.h"
 
+#include <iostream> // TODO: Remove this line, it's not needed!
 using rcljava_common::exceptions::rcljava_throw_rclexception;
 
 JNIEXPORT jlong JNICALL
@@ -192,6 +193,51 @@ Java_org_ros2_rcljava_node_NodeImpl_nativeCreateClientHandle(
 
   jlong jclient = reinterpret_cast<jlong>(client);
   return jclient;
+}
+
+JNIEXPORT jlong JNICALL
+Java_org_ros2_rcljava_node_NodeImpl_nativeCreateActionClientHandle(
+        JNIEnv * env, jclass, jlong node_handle, jclass jaction_class, jstring jaction_name,
+        jlong qos_profile_handle)
+{
+    jmethodID mid = env->GetStaticMethodID(jaction_class, "getActionTypeSupport", "()J");
+    assert(mid != NULL);
+    jlong jts = env->CallStaticLongMethod(jaction_class, mid);
+    assert(jts != 0);
+//    assert(mid != NULL);
+//
+//    jlong jts = env->CallStaticLongMethod(jaction_class, mid);
+//
+//    assert(jts != 0);
+//
+//    const char * service_name_tmp = env->GetStringUTFChars(jaction_name, 0);
+//
+//    std::string service_name(service_name_tmp);
+//
+//    env->ReleaseStringUTFChars(jaction_name, service_name_tmp);
+//
+//    rcl_node_t * node = reinterpret_cast<rcl_node_t *>(node_handle);
+//
+//    rosidl_service_type_support_t * ts = reinterpret_cast<rosidl_service_type_support_t *>(jts);
+//
+//    rcl_client_t * client = static_cast<rcl_client_t *>(malloc(sizeof(rcl_client_t)));
+//    *client = rcl_get_zero_initialized_client();
+//    rcl_client_options_t client_ops = rcl_client_get_default_options();
+//
+//    rmw_qos_profile_t * qos_profile = reinterpret_cast<rmw_qos_profile_t *>(qos_profile_handle);
+//    client_ops.qos = *qos_profile;
+//
+//    rcl_ret_t ret = rcl_client_init(client, node, ts, service_name.c_str(), &client_ops);
+//
+//    if (ret != RCL_RET_OK) {
+//        std::string msg = "Failed to create action client: " + std::string(rcl_get_error_string().str);
+//        rcl_reset_error();
+//        rcljava_throw_rclexception(env, ret, msg);
+//        return 0;
+//    }
+//
+//    jlong jclient = reinterpret_cast<jlong>(client);
+//    return jclient;
 }
 
 JNIEXPORT void JNICALL

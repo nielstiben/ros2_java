@@ -369,8 +369,24 @@ public class NodeImpl implements Node {
    */
   public final <T extends ActionDefinition>
   ActionClient<T> createActionClient(Class<T> actionType, String actionName, Consumer<? extends MessageDefinition> resultCallback,
-                                           Consumer<? extends MessageDefinition> feedbackCallback, final QoSProfile qosProfile) {
+                                           Consumer<? extends MessageDefinition> feedbackCallback, final QoSProfile qosProfile) throws NoSuchFieldException, IllegalAccessException {
+
+    Class<MessageDefinition> goalType = (Class) actionType.getField("GoalType").get(null);
+    Class<MessageDefinition> resultType = (Class) actionType.getField("ResultType").get(null);
+    Class<MessageDefinition> feedbackType = (Class) actionType.getField("FeedbackType").get(null);
+//
     long qosProfileHandle = RCLJava.convertQoSProfileToHandle(qosProfile);
+    long actionHandle = nativeCreateActionClientHandle(this.handle, actionType, actionName, qosProfileHandle);
+    System.out.println(actionHandle);
+
+//    long clientHandle =
+//            nativeCreateClientHandle(this.handle, serviceType, serviceName, qosProfileHandle);
+//    RCLJava.disposeQoSProfile(qosProfileHandle);
+//
+//    Client<T> client = new ClientImpl<T>(
+//            new WeakReference<Node>(this), clientHandle, serviceName, requestType, responseType);
+//    this.clients.add(client);
+
     return null;
   }
 
@@ -378,9 +394,12 @@ public class NodeImpl implements Node {
    * {@inheritDoc}
    */
   public final <T extends ActionDefinition> ActionClient<T> createActionClient(
-      Class<T> actionType, String actionName, Consumer<? extends MessageDefinition> resultCallback, Consumer<? extends MessageDefinition> feedbackCallback) {
+      Class<T> actionType, String actionName, Consumer<? extends MessageDefinition> resultCallback, Consumer<? extends MessageDefinition> feedbackCallback) throws NoSuchFieldException, IllegalAccessException {
     return this.createActionClient(actionType, actionName, resultCallback, feedbackCallback, QoSProfile.DEFAULT);
   }
+
+  public static native <T extends ActionDefinition> long nativeCreateActionClientHandle(
+      long handle, Class<T> cls, String action, long qosProfileHandle);
 
   /**
    * {@inheritDoc}

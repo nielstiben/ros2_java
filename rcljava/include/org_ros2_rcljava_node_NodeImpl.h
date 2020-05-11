@@ -58,6 +58,15 @@ JNICALL Java_org_ros2_rcljava_node_NodeImpl_nativeCreateClientHandle(
 
 /*
  * Class:     org_ros2_rcljava_node_NodeImpl
+ * Method:    nativeCreateActionClientHandle
+ * Signature: (JLjava/lang/Class;Ljava/lang/String;J)J
+ */
+JNIEXPORT jlong
+JNICALL Java_org_ros2_rcljava_node_NodeImpl_nativeCreateActionClientHandle(
+  JNIEnv *, jclass, jlong, jclass, jstring, jlong);
+
+/*
+ * Class:     org_ros2_rcljava_node_NodeImpl
  * Method:    nativeDispose
  * Signature: (J)V
  */

@@ -94,7 +94,7 @@ public interface Node extends Disposable {
       final String actionName,
       final Consumer<? extends MessageDefinition> resultCallback,
       final Consumer<? extends MessageDefinition> feedbackCallback
-  );
+  ) throws NoSuchFieldException, IllegalAccessException;
 
   /**
    * Create a Subscription&&ltlt;T&gt;.
