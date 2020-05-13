@@ -8,6 +8,7 @@ find_package(ament_cmake_export_jni_libraries REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(rcl REQUIRED)
 find_package(rcl_interfaces REQUIRED)
+find_package(rcl_action REQUIRED)
 find_package(rcljava_common REQUIRED)
 find_package(rmw REQUIRED)
 find_package(rmw_implementation_cmake REQUIRED)
@@ -98,6 +99,7 @@ foreach(_jni_source ${${PROJECT_NAME}_jni_sources})
     "rcljava_common"
     "builtin_interfaces"
     "rcl_interfaces"
+    "rcl_action"
   )
 
   target_include_directories(${_target_name}
@@ -173,6 +175,7 @@ add_jar("${PROJECT_NAME}_jar"
   ${rcljava_common_JARS}
   ${builtin_interfaces_JARS}
   ${rcl_interfaces_JARS}
+  ${rcl_action_JARS}
 )
 
 install_jar("${PROJECT_NAME}_jar" "share/${PROJECT_NAME}/java")
@@ -210,6 +213,7 @@ if(BUILD_TESTING)
     DEPENDENCIES
     builtin_interfaces
     rcl_interfaces
+    rcl_action
     ${_java_type_supports}
     SKIP_INSTALL
   )
@@ -284,6 +288,15 @@ if(BUILD_TESTING)
     list_append_unique(_deps_library_dirs ${_dep_dir})
   endforeach()
 
+  foreach(_dep_lib ${rcl_action_LIBRARIES})
+    get_filename_component(_dep_dir "${_dep_lib}" DIRECTORY)
+    list_append_unique(_deps_library_dirs ${_dep_dir})
+  endforeach()
+  foreach(_dep_lib ${rcl_action_JNI_LIBRARIES})
+    get_filename_component(_dep_dir "${_dep_lib}" DIRECTORY)
+    list_append_unique(_deps_library_dirs ${_dep_dir})
+  endforeach()
+
   list_append_unique(_deps_library_dirs ${CMAKE_CURRENT_BINARY_DIR})
   list_append_unique(_deps_library_dirs ${CMAKE_CURRENT_BINARY_DIR}/rcljava)
   list_append_unique(_deps_library_dirs ${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_java/rcljava/msg/)
@@ -300,10 +313,12 @@ if(BUILD_TESTING)
       "${testsuite}"
       INCLUDE_JARS
       "${rcljava_common_JARS}"
+      "${rcljava_action_JARS}"
       "${rcljava_test_msgs_JARS}"
       "${std_msgs_JARS}"
       "${builtin_interfaces_JARS}"
       "${rcl_interfaces_JARS}"
+      "${rcl_action_JARS}"
       "${_${PROJECT_NAME}_jar_file}"
       "${_${PROJECT_NAME}_messages_jar_file}"
       APPEND_LIBRARY_DIRS

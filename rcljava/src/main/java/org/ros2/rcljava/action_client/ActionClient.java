@@ -13,7 +13,7 @@ public interface ActionClient<T extends ActionDefinition> extends Disposable {
      *
      * @param actionGoalMessage An instance of the action goal message.
      */
-    void sendGoal(final T actionGoalMessage);
+    void sendGoal(final MessageDefinition actionGoalMessage);
 
     /**
      * Cancel a goal.

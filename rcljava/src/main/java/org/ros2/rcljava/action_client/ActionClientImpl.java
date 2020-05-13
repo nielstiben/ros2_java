@@ -54,7 +54,7 @@ public class ActionClientImpl<T extends ActionDefinition> implements ActionClien
     // =====================================================
 
     @Override
-    public void sendGoal(ActionDefinition actionGoalMessage) {
+    public void sendGoal(MessageDefinition actionGoalMessage) {
 
     }
 

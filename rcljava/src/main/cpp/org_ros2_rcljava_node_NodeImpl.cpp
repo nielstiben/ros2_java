@@ -21,6 +21,7 @@
 #include "rcl/error_handling.h"
 #include "rcl/node.h"
 #include "rcl/rcl.h"
+#include "rcl_action/rcl_action.h"
 #include "rmw/rmw.h"
 #include "rosidl_generator_c/message_type_support_struct.h"
 
@@ -204,6 +205,16 @@ Java_org_ros2_rcljava_node_NodeImpl_nativeCreateActionClientHandle(
     assert(mid != NULL);
     jlong jts = env->CallStaticLongMethod(jaction_class, mid);
     assert(jts != 0);
+
+    const char * action_name_tmp = env->GetStringUTFChars(jaction_name, 0);
+    std::string action_name(action_name_tmp);
+    env->ReleaseStringUTFChars(jaction_name, action_name_tmp);
+
+    // Create Node
+    rcl_node_t * node = reinterpret_cast<rcl_node_t *>(node_handle);
+    rosidl_message_type_support_t * ts = reinterpret_cast<rosidl_message_type_support_t *>(jts);
+    rcl_action_client_t * action_client = nullptr;
+
 //    assert(mid != NULL);
 //
 //    jlong jts = env->CallStaticLongMethod(jaction_class, mid);
