@@ -20,22 +20,15 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-/*
- * Class:     org_ros2_rcljava_action_client_ActionClientImpl
- * Method:    nativeSendClientRequest
- * Signature: (JJJJJLorg/ros2/rcljava/interfaces/MessageDefinition;)V
- */
-JNIEXPORT void
-JNICALL Java_org_ros2_rcljava_client_ClientImpl_nativeSendClientRequest(
-        JNIEnv *, jclass, jlong, jlong, jlong, jlong, jlong, jobject);
 
 /*
- * Class:     org_ros2_rcljava_client_ClientImpl
- * Method:    nativeDispose
- * Signature: (JJ)V
+ * Class:     org_ros2_rcljava_action_client_ActionClientImpl
+ * Method:    nativeHello
+ * Signature: (JJLorg/ros2/rcljava/interfaces/MessageDefinition;)V
  */
 JNIEXPORT void
-JNICALL Java_org_ros2_rcljava_client_ClientImpl_nativeDispose(JNIEnv *, jclass, jlong, jlong);
+JNICALL Java_org_ros2_rcljava_action_1client_ActionClientImpl_nativePublishGoal(
+        JNIEnv *, jclass, jlong, jlong, jobject);
 
 #ifdef __cplusplus
 }

@@ -4,7 +4,6 @@ import org.ros2.rcljava.common.JNIUtils;
 import org.ros2.rcljava.interfaces.ActionDefinition;
 import org.ros2.rcljava.interfaces.MessageDefinition;
 import org.ros2.rcljava.node.Node;
-import org.ros2.rcljava.publisher.PublisherImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,26 +35,28 @@ public class ActionClientImpl<T extends ActionDefinition> implements ActionClien
     /**
      * The topic to which this publisher will publish messages.
      */
-    private final String topic;
+    private final String actionName;
 
-    public ActionClientImpl(final WeakReference<Node> nodeReference, final long handle, final String topic) {
+    public ActionClientImpl(final WeakReference<Node> nodeReference, final long handle, final String actionName) {
         this.nodeReference = nodeReference;
         this.handle = handle;
-        this.topic = topic;
+        this.actionName = actionName;
     }
 
-    public static native void nativeHello();
 
-    public final void hello(){
-        nativeHello();
-    }
+    // =====================================================
+    // JAVA NATIVE METHODS
+    // =====================================================
+    public static native <MessageDefinition> void nativePublishGoal(
+            long handle, long messageDestructor, MessageDefinition goalMessage
+    );
+
     // =====================================================
     // OVERRIDE METHODS
     // =====================================================
 
-    @Override
-    public void sendGoal(MessageDefinition actionGoalMessage) {
-
+    public final void publishGoal(MessageDefinition actionGoalMessage) {
+        nativePublishGoal(this.handle, actionGoalMessage.getDestructorInstance(), actionGoalMessage);
     }
 
     @Override

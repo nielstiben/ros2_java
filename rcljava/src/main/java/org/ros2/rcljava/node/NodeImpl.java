@@ -17,6 +17,7 @@ package org.ros2.rcljava.node;
 
 import org.ros2.rcljava.RCLJava;
 import org.ros2.rcljava.action_client.ActionClient;
+import org.ros2.rcljava.action_client.ActionClientImpl;
 import org.ros2.rcljava.client.Client;
 import org.ros2.rcljava.client.ClientImpl;
 import org.ros2.rcljava.common.JNIUtils;
@@ -47,8 +48,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.ref.WeakReference;
-
-import java.lang.reflect.Method;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -376,18 +375,14 @@ public class NodeImpl implements Node {
     Class<MessageDefinition> feedbackType = (Class) actionType.getField("FeedbackType").get(null);
 //
     long qosProfileHandle = RCLJava.convertQoSProfileToHandle(qosProfile);
-    long actionHandle = nativeCreateActionClientHandle(this.handle, actionType, actionName, qosProfileHandle);
-    System.out.println(actionHandle);
+    long actionClientHandle = nativeCreateActionClientHandle(this.handle, actionType, actionName, qosProfileHandle);
 
-//    long clientHandle =
-//            nativeCreateClientHandle(this.handle, serviceType, serviceName, qosProfileHandle);
-//    RCLJava.disposeQoSProfile(qosProfileHandle);
-//
-//    Client<T> client = new ClientImpl<T>(
-//            new WeakReference<Node>(this), clientHandle, serviceName, requestType, responseType);
-//    this.clients.add(client);
+    RCLJava.disposeQoSProfile(qosProfileHandle);
+    ActionClient<T> actionClient = new ActionClientImpl<T>(
+            new WeakReference<Node>(this), actionClientHandle, actionName);
+    this.actionClients.add(actionClient);
 
-    return null;
+    return actionClient;
   }
 
   /**

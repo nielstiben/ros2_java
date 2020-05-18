@@ -30,7 +30,6 @@
 
 #include "org_ros2_rcljava_node_NodeImpl.h"
 
-#include <iostream> // TODO: Remove this line, it's not needed!
 using rcljava_common::exceptions::rcljava_throw_rclexception;
 
 JNIEXPORT jlong JNICALL
@@ -212,43 +211,30 @@ Java_org_ros2_rcljava_node_NodeImpl_nativeCreateActionClientHandle(
 
     // Create Node
     rcl_node_t * node = reinterpret_cast<rcl_node_t *>(node_handle);
-    rosidl_message_type_support_t * ts = reinterpret_cast<rosidl_message_type_support_t *>(jts);
-    rcl_action_client_t * action_client = nullptr;
+    rosidl_action_type_support_t * ts = reinterpret_cast<rosidl_action_type_support_t *>(jts);
+    rcl_action_client_t * action_client = static_cast<rcl_action_client_t *>(malloc(sizeof(rcl_action_client_t)));
+    * action_client = rcl_action_get_zero_initialized_client(); // Failure
+    rcl_action_client_options_t action_client_ops = rcl_action_client_get_default_options();
 
-//    assert(mid != NULL);
-//
-//    jlong jts = env->CallStaticLongMethod(jaction_class, mid);
-//
-//    assert(jts != 0);
-//
-//    const char * service_name_tmp = env->GetStringUTFChars(jaction_name, 0);
-//
-//    std::string service_name(service_name_tmp);
-//
-//    env->ReleaseStringUTFChars(jaction_name, service_name_tmp);
-//
-//    rcl_node_t * node = reinterpret_cast<rcl_node_t *>(node_handle);
-//
-//    rosidl_service_type_support_t * ts = reinterpret_cast<rosidl_service_type_support_t *>(jts);
-//
-//    rcl_client_t * client = static_cast<rcl_client_t *>(malloc(sizeof(rcl_client_t)));
-//    *client = rcl_get_zero_initialized_client();
-//    rcl_client_options_t client_ops = rcl_client_get_default_options();
-//
-//    rmw_qos_profile_t * qos_profile = reinterpret_cast<rmw_qos_profile_t *>(qos_profile_handle);
-//    client_ops.qos = *qos_profile;
-//
-//    rcl_ret_t ret = rcl_client_init(client, node, ts, service_name.c_str(), &client_ops);
-//
-//    if (ret != RCL_RET_OK) {
-//        std::string msg = "Failed to create action client: " + std::string(rcl_get_error_string().str);
-//        rcl_reset_error();
-//        rcljava_throw_rclexception(env, ret, msg);
-//        return 0;
-//    }
-//
-//    jlong jclient = reinterpret_cast<jlong>(client);
-//    return jclient;
+    rmw_qos_profile_t * qos_profile = reinterpret_cast<rmw_qos_profile_t *>(qos_profile_handle);
+    action_client_ops.goal_service_qos = *qos_profile;
+    action_client_ops.result_service_qos = *qos_profile;
+    action_client_ops.feedback_topic_qos = *qos_profile;
+    action_client_ops.status_topic_qos = *qos_profile;
+    action_client_ops.cancel_service_qos = *qos_profile;
+
+    rcl_ret_t ret = rcl_action_client_init(action_client, node, ts, action_name.c_str(), &action_client_ops);
+
+    if(ret != RCL_RET_OK){
+        std::string msg = "Failed to create action client: " + std::string(rcl_get_error_string().str);
+        rcl_reset_error();
+        rcljava_throw_rclexception(env, ret, msg);
+        return 0;
+    }
+
+    jlong jaction_client = reinterpret_cast<jlong>(action_client);
+
+    return jaction_client;
 }
 
 JNIEXPORT void JNICALL
