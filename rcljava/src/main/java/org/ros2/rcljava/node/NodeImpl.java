@@ -373,13 +373,13 @@ public class NodeImpl implements Node {
     Class<MessageDefinition> goalType = (Class) actionType.getField("GoalType").get(null);
     Class<MessageDefinition> resultType = (Class) actionType.getField("ResultType").get(null);
     Class<MessageDefinition> feedbackType = (Class) actionType.getField("FeedbackType").get(null);
-//
+
     long qosProfileHandle = RCLJava.convertQoSProfileToHandle(qosProfile);
     long actionClientHandle = nativeCreateActionClientHandle(this.handle, actionType, actionName, qosProfileHandle);
 
     RCLJava.disposeQoSProfile(qosProfileHandle);
     ActionClient<T> actionClient = new ActionClientImpl<T>(
-            new WeakReference<Node>(this), actionClientHandle, actionName);
+            new WeakReference<Node>(this), actionClientHandle, actionName, goalType, resultType, feedbackType);
     this.actionClients.add(actionClient);
 
     return actionClient;

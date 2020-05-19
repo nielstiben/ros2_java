@@ -27,8 +27,8 @@ extern "C" {
  * Signature: (JJLorg/ros2/rcljava/interfaces/MessageDefinition;)V
  */
 JNIEXPORT void
-JNICALL Java_org_ros2_rcljava_action_1client_ActionClientImpl_nativePublishGoal(
-        JNIEnv *, jclass, jlong, jlong, jobject);
+JNICALL Java_org_ros2_rcljava_action_1client_ActionClientImpl_nativeSendGoalRequest(
+        JNIEnv *, jclass, jlong, jlong, jlong, jlong, jlong, jobject);
 
 #ifdef __cplusplus
 }

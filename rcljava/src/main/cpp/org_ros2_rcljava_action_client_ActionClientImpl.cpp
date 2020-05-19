@@ -37,9 +37,52 @@ using rcljava_common::signatures::convert_from_java_signature;
 using rcljava_common::signatures::destroy_ros_message_signature;
 
 JNIEXPORT void JNICALL
-Java_org_ros2_rcljava_action_1client_ActionClientImpl_nativePublishGoal(
-        JNIEnv * env, jclass, jlong action_client_handle, jlong jactionmsg_destructor_handle, jobject jactionmsg)
+Java_org_ros2_rcljava_action_1client_ActionClientImpl_nativeSendGoalRequest(
+        JNIEnv * env,
+        jclass,
+        jlong action_client_handle,
+        jlong sequence_number,
+        jlong jgoal_request_msg_from_java_converter_handle,
+        jlong jgoal_request_msg_to_java_converter_handle,
+        jlong jgoal_request_msg_destructor_handle,
+        jobject jgoal_request_msg)
 {
-//    rcl_action_client_ * action_client = nullptr;
-    rcljava_throw_rclexception(env, 0, "not implemented");
+    assert(action_client_handle != 0);
+    assert(jgoal_request_msg_from_java_converter_handle != 0);
+    assert(jgoal_request_msg_to_java_converter_handle != 0);
+    assert(jgoal_request_msg_destructor_handle != 0);
+    assert(jgoal_request_msg != nullptr);
+
+    // Get Action client
+    rcl_action_client_t * action_client = reinterpret_cast<rcl_action_client_t *>(action_client_handle);
+
+    // Java message class
+    jclass jgoal_request_class = env->GetObjectClass(jgoal_request_msg);
+
+    // Signature
+    jmethodID mid = env->GetStaticMethodID(jgoal_request_class, "getFromJavaConverter", "()J");
+    jlong jfrom_java_converter = env->CallStaticLongMethod(jgoal_request_class, mid);
+
+    //    convert_from_java_signature convert_from_java = reinterpret_cast<convert_from_java_signature>(jgoal_request_msg_from_java_converter_handle);
+    convert_from_java_signature convert_from_java =
+            reinterpret_cast<convert_from_java_signature>(jfrom_java_converter);
+
+    // Get Raw message
+    void * raw_ros_message = convert_from_java(jgoal_request_msg, nullptr);
+
+    rcljava_throw_rclexception(env, 0, raw_ros_message->to);
+
+    // Send Goal message
+    rcl_ret_t ret = rcl_action_send_goal_request(action_client, raw_ros_message, &sequence_number);
+
+    destroy_ros_message_signature destroy_ros_message =
+            reinterpret_cast<destroy_ros_message_signature>(jgoal_request_msg_destructor_handle);
+    destroy_ros_message(raw_ros_message);
+
+    if (ret != RCL_RET_OK) {
+        std::string msg = "Failed to send action goal: " + std::string(rcl_get_error_string().str);
+        rcl_reset_error();
+        rcljava_throw_rclexception(env, ret, msg);
+    }
+//    rcljava_throw_rclexception(env, 0, "not implemented");
 }
