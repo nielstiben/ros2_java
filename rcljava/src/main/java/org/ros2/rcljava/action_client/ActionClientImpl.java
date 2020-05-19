@@ -1,6 +1,5 @@
 package org.ros2.rcljava.action_client;
 
-import example_interfaces.action.Fibonacci_Goal;
 import org.ros2.rcljava.common.JNIUtils;
 import org.ros2.rcljava.concurrent.RCLFuture;
 import org.ros2.rcljava.consumers.Consumer;
