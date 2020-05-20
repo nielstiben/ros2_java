@@ -23,8 +23,8 @@ extern "C" {
 
 /*
  * Class:     org_ros2_rcljava_action_client_ActionClientImpl
- * Method:    nativeHello
- * Signature: (JJLorg/ros2/rcljava/interfaces/MessageDefinition;)V
+ * Method:    nativeSendGoalRequest
+ * Signature: (JJJJJLorg/ros2/rcljava/interfaces/MessageDefinition;)V
  */
 JNIEXPORT void
 JNICALL Java_org_ros2_rcljava_action_1client_ActionClientImpl_nativeSendGoalRequest(

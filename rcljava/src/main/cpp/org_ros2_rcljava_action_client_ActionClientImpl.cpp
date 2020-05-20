@@ -15,13 +15,10 @@
 #include <jni.h>
 
 #include <cassert>
-#include <cstdio>
-#include <cstdlib>
 #include <string>
 
 #include "rcl/error_handling.h"
 #include "rcl/node.h"
-#include "rcl/rcl.h"
 #include "rcl_action/rcl_action.h"
 #include "rmw/rmw.h"
 
@@ -29,7 +26,8 @@
 #include "rcljava_common/signatures.hpp"
 
 #include "org_ros2_rcljava_action_client_ActionClientImpl.h"
-#include <iostream> // TODO: Remove this line, it's not needed!
+#include "test_msgs/action/fibonacci.h"
+#include <iostream>
 
 
 using rcljava_common::exceptions::rcljava_throw_rclexception;
@@ -38,27 +36,62 @@ using rcljava_common::signatures::destroy_ros_message_signature;
 
 JNIEXPORT void JNICALL
 Java_org_ros2_rcljava_action_1client_ActionClientImpl_nativeSendGoalRequest(
-        JNIEnv * env, jclass, jlong action_client_handle, jlong jaction_msg_destructor_handle,
+        JNIEnv * env, jclass,
+        jlong action_client_handle,
+        jlong sequence_number,
+        jlong jaction_goal_msg_from_java_converter_handle,
+        jlong jaction_goal_msg_to_java_converter_handle,
+        jlong jaction_goal_msg_destructor_handle,
         jobject jgoal_request_msg)
 {
+    assert(action_client_handle != 0);
+    assert(jaction_goal_msg_from_java_converter_handle != 0);
+    assert(jaction_goal_msg_to_java_converter_handle != 0);
+    assert(jaction_goal_msg_destructor_handle != 0);
+    assert(jgoal_request_msg != nullptr);
+
     // Get Action client
     rcl_action_client_t * action_client = reinterpret_cast<rcl_action_client_t *>(action_client_handle);
-    // Goal message class
-    jclass jaction_message_class = env->GetObjectClass(jgoal_request_msg);
-    jmethodID mid = env->GetStaticMethodID(jaction_message_class, "getFromJavaConverter", "()J");
-    jlong jfrom_java_converter = env->CallStaticLongMethod(jaction_message_class, mid);
 
     convert_from_java_signature convert_from_java =
-            reinterpret_cast<convert_from_java_signature>(jfrom_java_converter);
+            reinterpret_cast<convert_from_java_signature>(jaction_goal_msg_from_java_converter_handle);
 
-    void * raw_ros_message = convert_from_java(jgoal_request_msg, nullptr);
+    void * action_request_msgs = convert_from_java(jgoal_request_msg, nullptr);
 
-    int64_t sequence_number;
+    test_msgs__action__Fibonacci_SendGoal_Request * abc =
+            reinterpret_cast<test_msgs__action__Fibonacci_SendGoal_Request *>(action_request_msgs);
 
-    rcl_ret_t ret = rcl_action_send_goal_request(action_client, raw_ros_message, &sequence_number);
+    std::cout << "Breakpoint 1" << std::endl;
+    std::cout << "Order " << abc->goal.order << std::endl;
+    std::cout << "UUID " << abc->goal_id.uuid << std::endl;
+
+    jclass jgoal = env->GetObjectClass(jgoal_request_msg);
+    std::cout << "Breakpoint 2" << std::endl;
+    jmethodID orderGetter = env->GetMethodID(jgoal, "getOrder()", "()I");
+//    jmethodID orderGetter = env->GetMethodID(jgoal, "getDestructorInstance()", "()J");
+//    const int goalOrder = env->GetIntField(order, NULL);
+    std::cout << "Breakpoint 3" << std::endl;
+//    jint goalOrder = env->CallIntMethod(jgoal, orderGetter);
+//    jlong goalOrder = env->CallLongMethod(jgoal, orderGetter);
+    std::cout << "Breakpoint 4" << std::endl;
+//    std::cout << goalOrder << std::endl;
+    std::cout << "Breakpoint 5" << std::endl;
+
+//    auto *tmp = action_request_msgs;
+//    static_cast<test_msgs__action__Fibonacci_Goal>(tmp)
+
+//    // ==== TEST Fibonacci Order
+//    test_msgs__action__Fibonacci_SendGoal_Request outgoing_goal_request;
+//    outgoing_goal_request.goal.order = 8;
+
+
+//    rcl_ret_t ret = rcl_action_send_goal_request(action_client, &outgoing_goal_request, &sequence_number);
+
+    rcl_ret_t ret = rcl_action_send_goal_request(action_client, action_request_msgs, &sequence_number);
+
     destroy_ros_message_signature destroy_ros_message =
-            reinterpret_cast<destroy_ros_message_signature>(jaction_msg_destructor_handle);
-    destroy_ros_message(raw_ros_message);
+            reinterpret_cast<destroy_ros_message_signature>(jaction_goal_msg_destructor_handle);
+    destroy_ros_message(action_request_msgs);
 
     if (ret != RCL_RET_OK) {
         std::string msg = "Failed to send action goal: " + std::string(rcl_get_error_string().str);

@@ -9,6 +9,7 @@ find_package(builtin_interfaces REQUIRED)
 find_package(rcl REQUIRED)
 find_package(rcl_interfaces REQUIRED)
 find_package(rcl_action REQUIRED)
+find_package(test_msgs REQUIRED)
 find_package(rcljava_common REQUIRED)
 find_package(rmw REQUIRED)
 find_package(rmw_implementation_cmake REQUIRED)
@@ -100,6 +101,7 @@ foreach(_jni_source ${${PROJECT_NAME}_jni_sources})
     "builtin_interfaces"
     "rcl_interfaces"
     "rcl_action"
+    "test_msgs"
   )
 
   target_include_directories(${_target_name}
@@ -176,6 +178,7 @@ add_jar("${PROJECT_NAME}_jar"
   ${builtin_interfaces_JARS}
   ${rcl_interfaces_JARS}
   ${rcl_action_JARS}
+  ${test_msgs_JARS}
 )
 
 install_jar("${PROJECT_NAME}_jar" "share/${PROJECT_NAME}/java")
@@ -214,6 +217,7 @@ if(BUILD_TESTING)
     builtin_interfaces
     rcl_interfaces
     rcl_action
+    test_msgs
     ${_java_type_supports}
     SKIP_INSTALL
   )
@@ -297,6 +301,15 @@ if(BUILD_TESTING)
     list_append_unique(_deps_library_dirs ${_dep_dir})
   endforeach()
 
+  foreach(_dep_lib ${test_msgs_LIBRARIES})
+    get_filename_component(_dep_dir "${_dep_lib}" DIRECTORY)
+    list_append_unique(_deps_library_dirs ${_dep_dir})
+  endforeach()
+  foreach(_dep_lib ${test_msgs_JNI_LIBRARIES})
+    get_filename_component(_dep_dir "${_dep_lib}" DIRECTORY)
+    list_append_unique(_deps_library_dirs ${_dep_dir})
+  endforeach()
+
   list_append_unique(_deps_library_dirs ${CMAKE_CURRENT_BINARY_DIR})
   list_append_unique(_deps_library_dirs ${CMAKE_CURRENT_BINARY_DIR}/rcljava)
   list_append_unique(_deps_library_dirs ${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_java/rcljava/msg/)
@@ -319,6 +332,7 @@ if(BUILD_TESTING)
       "${builtin_interfaces_JARS}"
       "${rcl_interfaces_JARS}"
       "${rcl_action_JARS}"
+      "${test_msgs_JARS}"
       "${_${PROJECT_NAME}_jar_file}"
       "${_${PROJECT_NAME}_messages_jar_file}"
       APPEND_LIBRARY_DIRS

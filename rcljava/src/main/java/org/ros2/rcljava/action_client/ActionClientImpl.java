@@ -94,13 +94,13 @@ public class ActionClientImpl<T extends ActionDefinition> implements ActionClien
         }
     }
 
-    public static native <U extends MessageDefinition> void nativeSendGoalRequest(
+    public static native void nativeSendGoalRequest(
             long handle,
             long sequenceNumber,
             long messageFromJavaConverterHandle,
             long messageToJavaConverterHandle,
             long messageDestructor,
-            U goalMessage
+            MessageDefinition goalMessage
     );
 
     /**
