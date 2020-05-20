@@ -58,34 +58,12 @@ Java_org_ros2_rcljava_action_1client_ActionClientImpl_nativeSendGoalRequest(
 
     void * action_request_msgs = convert_from_java(jgoal_request_msg, nullptr);
 
+    std::cout << "Assume we receive a Fibonacci Goal Request, show its data:" << std::endl;
     test_msgs__action__Fibonacci_SendGoal_Request * abc =
             reinterpret_cast<test_msgs__action__Fibonacci_SendGoal_Request *>(action_request_msgs);
 
-    std::cout << "Breakpoint 1" << std::endl;
-    std::cout << "Order " << abc->goal.order << std::endl;
+    std::cout << "Order " << abc->goal.order << std::endl; // Always 0
     std::cout << "UUID " << abc->goal_id.uuid << std::endl;
-
-    jclass jgoal = env->GetObjectClass(jgoal_request_msg);
-    std::cout << "Breakpoint 2" << std::endl;
-    jmethodID orderGetter = env->GetMethodID(jgoal, "getOrder()", "()I");
-//    jmethodID orderGetter = env->GetMethodID(jgoal, "getDestructorInstance()", "()J");
-//    const int goalOrder = env->GetIntField(order, NULL);
-    std::cout << "Breakpoint 3" << std::endl;
-//    jint goalOrder = env->CallIntMethod(jgoal, orderGetter);
-//    jlong goalOrder = env->CallLongMethod(jgoal, orderGetter);
-    std::cout << "Breakpoint 4" << std::endl;
-//    std::cout << goalOrder << std::endl;
-    std::cout << "Breakpoint 5" << std::endl;
-
-//    auto *tmp = action_request_msgs;
-//    static_cast<test_msgs__action__Fibonacci_Goal>(tmp)
-
-//    // ==== TEST Fibonacci Order
-//    test_msgs__action__Fibonacci_SendGoal_Request outgoing_goal_request;
-//    outgoing_goal_request.goal.order = 8;
-
-
-//    rcl_ret_t ret = rcl_action_send_goal_request(action_client, &outgoing_goal_request, &sequence_number);
 
     rcl_ret_t ret = rcl_action_send_goal_request(action_client, action_request_msgs, &sequence_number);
 
@@ -98,5 +76,4 @@ Java_org_ros2_rcljava_action_1client_ActionClientImpl_nativeSendGoalRequest(
         rcl_reset_error();
         rcljava_throw_rclexception(env, ret, msg);
     }
-//    rcljava_throw_rclexception(env, 0, "not implemented");
 }
