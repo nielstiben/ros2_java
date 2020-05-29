@@ -42,13 +42,13 @@ Java_org_ros2_rcljava_action_1client_ActionClientImpl_nativeSendGoalRequest(
         jlong jaction_goal_msg_from_java_converter_handle,
         jlong jaction_goal_msg_to_java_converter_handle,
         jlong jaction_goal_msg_destructor_handle,
-        jobject jgoal_request_msg)
+        jobject jaction_goal)
 {
     assert(action_client_handle != 0);
     assert(jaction_goal_msg_from_java_converter_handle != 0);
     assert(jaction_goal_msg_to_java_converter_handle != 0);
     assert(jaction_goal_msg_destructor_handle != 0);
-    assert(jgoal_request_msg != nullptr);
+    assert(jaction_goal != nullptr);
 
     // Get Action client
     rcl_action_client_t * action_client = reinterpret_cast<rcl_action_client_t *>(action_client_handle);
@@ -56,20 +56,22 @@ Java_org_ros2_rcljava_action_1client_ActionClientImpl_nativeSendGoalRequest(
     convert_from_java_signature convert_from_java =
             reinterpret_cast<convert_from_java_signature>(jaction_goal_msg_from_java_converter_handle);
 
-    void * action_request_msgs = convert_from_java(jgoal_request_msg, nullptr);
+    // Get Goal
+    void * action_goal = convert_from_java(jaction_goal, nullptr);
+    std::cout << "Assume we receive a Fibonacci Goal, show its data:" << std::endl;
+    test_msgs__action__Fibonacci_Goal * abc = reinterpret_cast<test_msgs__action__Fibonacci_Goal *>(action_goal);
+    std::cout << "Order " << abc->order << std::endl;
 
-    std::cout << "Assume we receive a Fibonacci Goal Request, show its data:" << std::endl;
-    test_msgs__action__Fibonacci_SendGoal_Request * abc =
-            reinterpret_cast<test_msgs__action__Fibonacci_SendGoal_Request *>(action_request_msgs);
+    // Generate Goal Request and insert Goal
+    auto action_goal_request_msg = test_msgs__action__Fibonacci_SendGoal_Request__create();
+    action_goal_request_msg->goal = *abc;
 
-    std::cout << "Order " << abc->goal.order << std::endl; // Always 0
-    std::cout << "UUID " << abc->goal_id.uuid << std::endl;
-
-    rcl_ret_t ret = rcl_action_send_goal_request(action_client, action_request_msgs, &sequence_number);
+    // Send Goal Request
+    rcl_ret_t ret = rcl_action_send_goal_request(action_client, action_goal_request_msg, &sequence_number);
 
     destroy_ros_message_signature destroy_ros_message =
             reinterpret_cast<destroy_ros_message_signature>(jaction_goal_msg_destructor_handle);
-    destroy_ros_message(action_request_msgs);
+    destroy_ros_message(action_goal);
 
     if (ret != RCL_RET_OK) {
         std::string msg = "Failed to send action goal: " + std::string(rcl_get_error_string().str);
