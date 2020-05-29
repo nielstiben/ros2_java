@@ -85,7 +85,7 @@ public class ActionClientImpl<T extends ActionDefinition> implements ActionClien
                     actionGoalMessage.getDestructorInstance(),
                     actionGoalMessage
             );
-            RCLFuture<V> future = new RCLFuture<V>(nodeReference);
+            RCLFuture<V> future = new RCLFuture<V>(this.nodeReference);
 
             Map.Entry<Consumer, RCLFuture> entry =
                     new AbstractMap.SimpleEntry<Consumer, RCLFuture>(callback, future);
@@ -94,13 +94,13 @@ public class ActionClientImpl<T extends ActionDefinition> implements ActionClien
         }
     }
 
-    public static native <U extends MessageDefinition> void nativeSendGoalRequest(
-            long handle,
+    public static native void nativeSendGoalRequest(
+            long actionClientHandle,
             long sequenceNumber,
-            long messageFromJavaConverterHandle,
-            long messageToJavaConverterHandle,
-            long messageDestructor,
-            U goalMessage
+            long actionGoalMsgFromJavaConverterHandle,
+            long actionGoalMsgToJavaConverterHandle,
+            long actionGoalMsgDestructorHandle,
+            MessageDefinition goalRequestMsg
     );
 
     /**
